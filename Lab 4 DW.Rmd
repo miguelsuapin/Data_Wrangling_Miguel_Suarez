@@ -1,0 +1,57 @@
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+
+df <- read_csv("tabla_completa.csv")
+
+# 1. DEBEMOS INVERTIR EN MAS PERSONAL?
+piloto <- df %>% select(PILOTO, MES)
+piloto <- piloto %>% group_by(MES,PILOTO) %>% summarise(VIAJES = n())
+ggplot(piloto, aes(MES, VIAJES)) +
+  geom_line(aes(color = `PILOTO`, group = `PILOTO`))
+# En esta grafica, aunque dificil sea ver lo especifico de cada piloto, se
+# puede observar como varian los viajes que realiza cada piloto mensualmente
+# de forma que notamos como no es necesario contratar mas pilotos, puesto
+# que de ser necesario, veriamos lineas con menos variaciones que esten
+# mas enfocadas al area superior de la grafica, y no es el caso. 
+
+# 2. DEBEMOS INVERTIR EN MAS VEHICULOS? CUANTOS Y DE QUE TIPO?
+hist(df$CANTIDAD)
+xunidad <- df %>% select(UNIDAD) %>% group_by(UNIDAD) %>% summarise(n = n())
+View(xunidad)
+paneles <- df[df$UNIDAD == "Panel",]
+max(paneles$CANTIDAD)
+# como podemos observar, las paneles son quienes usualmente llevan los pedidos
+# de hasta 500 unidades, que es 1/4 de todas nuestras posibilidades de pedidos,
+# que alcanzan hasta las 2000 unidades. En el histograma de frequencias vemos
+# como los pedidos estan relativamente balanceados en cuantos se piden de cada
+# cantidad, posiblemente incluso MAS pedidos de menores cantidades, y aun asi, 
+# contamos con tan solo 364 viajes realizados en paneles relativa a los 1211
+# camiones grandes.
+
+# 3. LAS TARIFAS ACTUALES SON ACEPTABLES PARA LOS CLIENTES?
+cliente <- df %>% select(CLIENTE, MES)
+cliente <- cliente %>% group_by(MES,CLIENTE) %>% summarise(VIAJES = n())
+cliente <- dcast(cliente, `MES` ~ CLIENTE, value.var = "VIAJES")
+summary(cliente)
+# Las tarifas actuales parecen ser aceptables para los clientes
+
+# 4. NOS ESTAN ROBANDO LOS PILOTOS?
+robos <- df %>% select(PILOTO, MES)
+robos <- robos %>% group_by(MES,PILOTO) %>% summarise(VIAJES = n())
+robos <- dcast(robos, `MES` ~ PILOTO, value.var = "VIAJES")
+summary(robos)
+# a simple vista no parece que nos esten robando
+
+# 80-20
+importantes <- df %>% select(CLIENTE, CANTIDAD) %>% group_by(CLIENTE) %>% summarise(compras = sum(CANTIDAD))
+importantes <- importantes %>% arrange(compras)
+TOTAL <- sum(importantes$compras)
+
+# MEJORES PILOTOS
+summary(robos)
+# Los mejores pilotos pueden ser Fernando Mariano y Pedro Alvarez
+# Los transportes mas efectivos son los camiones grandes que sirven para 
+# cualquier cantidad de pedido, aunque las paneles van a ser mas
+# eficientes con la gasolina para pedidos pequenios
