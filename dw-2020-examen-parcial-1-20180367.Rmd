@@ -1,0 +1,126 @@
+---
+title: "dw-2020-parcial-1"
+author: "Tepi"
+date: "9/3/2020"
+output: rmarkdown::github_document
+
+---
+
+# Examen parcial
+
+Indicaciones generales:
+
+* Usted tiene el período de la clase para resolver el examen parcial.
+* La entrega del parcial, al igual que las tareas, es por medio de su cuenta de github, pegando el link en el portal de MiU.
+
+
+* Pueden hacer uso del material del curso e internet (stackoverflow, etc.). Sin embargo, si encontramos algún indicio de copia, se anulará el exámen para los estudiantes involucrados. Por lo tanto, aconsejamos no compartir las agregaciones que generen. 
+
+## Sección I: Preguntas teóricas.
+
+* Existen 10 preguntas directas en este Rmarkdown, de las cuales usted deberá responder 5. Las 5 a responder estarán determinadas por un muestreo aleatorio basado en su número de carné.
+
+* Ingrese su número de carné en  `set.seed()` y corra el chunk de R para determinar cuáles preguntas debe responder.
+
+
+```{r, echo=TRUE, cache=TRUE}
+
+set.seed(20180367) 
+v<- 1:10
+preguntas <-sort(sample(v, size = 5, replace = FALSE ))
+
+paste0("Mis preguntas a resolver son: ",paste0(preguntas,collapse = ", "))
+
+```
+
+
+### Listado de preguntas teóricas
+
+1. Para las siguientes sentencias de `base R`, liste su contraparte de `dplyr`:
+    * `str()`
+    * `df[,c("a","b")]`
+    * `names(df)[4] <- "new_name"` donde la posición 4 corresponde a la variable `old_name`
+    * `df[df$variable == "valor",]`
+    
+```{r, echo=TRUE, cache=TRUE}
+
+library(dplyr)
+explain()
+df %>% select("a", "b")
+df <- df %>% rename("new_name" = "old_name")
+df %>% filter(variable = "valor")
+
+```
+    
+    
+2. Al momento de filtrar en SQL, ¿cuál keyword cumple las mismas funciones que el keyword `OR`  para filtrar uno o más elementos una misma columna?
+- WHERE AND
+
+4. ¿Cuál es la diferencia entre utilizar `==` y `=` en R?
+- Que el "==" es para hacer comparaciones entre dos valores para verificar si son identicos mientras que "=" sirve para asignarle un valor a algo. 
+
+7. ¿Qué pasa si quiero agregar una nueva categoría a un factor que no se encuentra en los niveles existentes?
+- Se puede asignar sin problemas asignandoselo a los respectivos levels(x) ->
+
+8. Si en un dataframe, a una variable de tipo `factor` le agrego un nuevo elemento que *no se encuentra en los niveles existentes*, ¿cuál sería el resultado esperado y por qué?
+- Saldria el nuevo nivel en la lista de niveles que contiene ese factor.
+    * El nuevo elemento
+    * `NA`
+
+
+    * SELECT * FROM A _______ B ON A.KEY = B.KEY WHERE __________ = __________
+  
+Extra: ¿Cuántos posibles exámenes de 5 preguntas se pueden realizar utilizando como banco las diez acá presentadas?
+(responder con código de R.)
+```{r, echo=TRUE, cache=TRUE}
+
+a <- 1
+resultado <- 0
+for (k in 1:(10/2))
+{
+  resultado <- resultado + 10-5+a
+  a <- a - 1
+}
+resultado
+
+```
+
+
+## Sección II Preguntas prácticas.
+
+
+* Conteste las siguientes preguntas utilizando sus conocimientos de R. Adjunte el código que utilizó para llegar a sus conclusiones en un chunk del markdown.
+
+A. De los clientes que están en más de un país,¿cuál cree que es el más rentable y por qué?
+
+B. Estrategia de negocio ha decidido que ya no operará en aquellos territorios cuyas pérdidas sean "considerables". Bajo su criterio, ¿cuáles son estos territorios y por qué ya no debemos operar ahí?
+
+
+
+
+
+
+
+
+### I. Preguntas teóricas
+
+
+## A
+
+```{r }
+parcial_anonimo <- readRDS("parcial_anonimo.rds")
+p1 <- parcial_anonimo[which(duplicated(parcial_anonimo$Cliente)),]
+p1 <- p1 %>% select(Cliente, Venta) %>% group_by(Cliente) %>% summarise(total = sum(Venta)) %>% arrange(desc(total))
+p1$Cliente[1] # Este es el cliente mas rentable dado que es con quien mas ventas hemos conseguidos de los clientes que estan en # # #diferentes paises
+```
+
+
+
+
+## B
+
+```{r }
+###resuelva acá
+
+```
+
